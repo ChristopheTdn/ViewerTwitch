@@ -27,7 +27,7 @@ namespace ViewerTwitch
         public SessionSpartiate()
         {
             // initialisation des constantes de la session
-            this.localDir = Fnc_FindLocalDir()+"\\";
+            this.localDir = Fnc_FindLocalDir() + "\\";
             this.spartiate = Fnc_ListeSpartiate();
             Fnc_heureStreamer(); // channelViewer et heureSession
             Core_Session();
@@ -36,8 +36,9 @@ namespace ViewerTwitch
         // **********************
         // *         CORE       *
         // **********************
-        private  void Core_Session ()
-        {
+        private void Core_Session()
+        {   
+
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("{0}", heureSessionMin);
             Console.ForegroundColor = ConsoleColor.White;
@@ -53,9 +54,11 @@ namespace ViewerTwitch
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.Write("   > ");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("{0}", membre);              
+                Console.WriteLine("{0}", membre);
             }
             Console.WriteLine("");
+            Fnc_RecordViewersPoints();
+
 
 
         }
@@ -87,7 +90,7 @@ namespace ViewerTwitch
             }
             return spartiates;
         }
-        private  List<string> Fnc_ListeMembresEnLigne()
+        private List<string> Fnc_ListeMembresEnLigne()
         {
             // Renvois la liste des chatters d'un channel donné
             Fnc_heureStreamer();
@@ -127,6 +130,32 @@ namespace ViewerTwitch
                     line = sr.ReadLine();
                 }
             }
+        }
+        private void Fnc_RecordViewersPoints()
+        {
+            // Enregistre 1 point par Viewer et le sauvegarde dans un fichier Texte
+            string path = localDir + @"data\" + DateTime.Now.ToString("yyyy-MM-dd") + @"\";
+            if (!Directory.Exists(path))
+            {
+                DirectoryInfo di = Directory.CreateDirectory(path);
+            }
+            string fileName = path+ DateTime.Now.ToString("HH")+"h"+DateTime.Now.ToString("mm") +"mn"+ DateTime.Now.ToString("ss")+"s"+@"-chatters.txt";
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(fileName))
+                {
+                    foreach (string membre in Fnc_ListeMembresEnLigne())
+                    {
+                        writer.WriteLine("{0}", membre);
+                    }
+                    
+                }
+            }
+            catch (Exception exp)
+            {
+                Console.Write(exp.Message);
+            }
+
         }
     }
 }

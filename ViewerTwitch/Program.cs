@@ -14,10 +14,11 @@ namespace ViewerTwitch
             // TIMER PRINCIPAL
             System.Timers.Timer myTimer = new System.Timers.Timer();
             myTimer.Elapsed += (sender, e) => OnTimedEvent(sender, e);
-            myTimer.Interval = 0.1 * 60000; 
+            myTimer.Interval = 30 * 60000; 
             myTimer.Enabled = true;
 
             Console.WriteLine("Le script est lancé");
+            SessionSpartiate spartiate = new SessionSpartiate();
             ConsoleKeyInfo input;
             do
             {
