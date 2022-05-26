@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ViewerTwitch
 {
 
-    public class TwChatters
+    public class JSONChatters
     {
         // Constructeurs
         public _Links _links { get; set; }

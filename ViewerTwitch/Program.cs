@@ -14,7 +14,7 @@ namespace ViewerTwitch
             // TIMER PRINCIPAL
             System.Timers.Timer myTimer = new System.Timers.Timer();
             myTimer.Elapsed += (sender, e) => OnTimedEvent(sender, e);
-            myTimer.Interval = 30 * 60000; 
+            myTimer.Interval = 10 * 60000; 
             myTimer.Enabled = true;
 
             Console.WriteLine("Le script est lancé");
@@ -30,7 +30,14 @@ namespace ViewerTwitch
         // Définition Fonctions Principales
         private static void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            SessionSpartiate spartiate = new SessionSpartiate();
+            try
+            {
+                SessionSpartiate spartiate = new SessionSpartiate();
+            }
+            catch (Exception except)
+            {
+                Console.WriteLine("Probleme d'erreur lors de la requete : {0}", except.ToString());
+            }
         }
       
     }

@@ -16,10 +16,13 @@ namespace ViewerTwitch
 
         private string localDir = "";
         private List<string> spartiate = new List<string>();
+        private List<string> listeMembreEnLigne = new List<string>();
+        private List<string> listeMembreEnLigneHoraire = new List<string>();
         private string channelViewer = "";
-        private ViewerTwitch.TwChatters JsonFluxChatters = new TwChatters();
+        private ViewerTwitch.JSONChatters JsonFluxChatters = new JSONChatters();
         private string heureSessionMin = "";
         private string heureSessionMax = "";
+
 
         // ***************************
         // * CONSTRUCTEUR PAR DEFAUT *
@@ -37,7 +40,7 @@ namespace ViewerTwitch
         // *         CORE       *
         // **********************
         private void Core_Session()
-        {   
+        {
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("{0}", heureSessionMin);
@@ -49,6 +52,10 @@ namespace ViewerTwitch
             Console.Write(" : ");
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("{0}", channelViewer);
+
+            // enregistre les viewers dans le fichier
+            Fnc_RecordViewersPoints();
+            // renvois sur la console la liste actualisé des joueurs sur le creneau
             foreach (string membre in Fnc_ListeMembresEnLigne())
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -57,7 +64,7 @@ namespace ViewerTwitch
                 Console.WriteLine("{0}", membre);
             }
             Console.WriteLine("");
-            Fnc_RecordViewersPoints();
+
 
 
 
@@ -97,12 +104,36 @@ namespace ViewerTwitch
             var url = "https://tmi.twitch.tv/group/user/" + channelViewer.ToLower() + "/chatters";
             var webrequest = (HttpWebRequest)System.Net.WebRequest.Create(url);
             List<string> chatters = null;
-            using (var response = webrequest.GetResponse())
-            using (var reader = new StreamReader(response.GetResponseStream()))
+            try
             {
-                var source = reader.ReadToEnd();
-                JsonFluxChatters = JsonSerializer.Deserialize<TwChatters>(source);
-                chatters = JsonFluxChatters.ListeChatter(Fnc_ListeSpartiate());
+                using (var response = webrequest.GetResponse())
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    var source = reader.ReadToEnd();
+                    JsonFluxChatters = JsonSerializer.Deserialize<JSONChatters>(source);
+                    chatters = JsonFluxChatters.ListeChatter(Fnc_ListeSpartiate());
+                }
+                if (chatters.Count() == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.DarkRed;
+                    Console.Write(" Erreur de requete :");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.Write(" Le serveur ne renvois pas d'activité. Verifier le pseudo du streamer.");
+                    Console.WriteLine("Le script poursuit son fonctionnement.");
+                }
+            }
+            catch (WebException except)
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.DarkRed;
+                Console.Write(" Erreur reseau  :");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("{0}", except);
+                Console.WriteLine("Le script poursuit son fonctionnement.");
+
             }
             return chatters;
         }
@@ -134,29 +165,89 @@ namespace ViewerTwitch
         private void Fnc_RecordViewersPoints()
         {
             // Enregistre 1 point par Viewer et le sauvegarde dans un fichier Texte
+
             string path = localDir + @"data\" + DateTime.Now.ToString("yyyy-MM-dd") + @"\";
             if (!Directory.Exists(path))
             {
                 DirectoryInfo di = Directory.CreateDirectory(path);
             }
-            string fileName = path+ DateTime.Now.ToString("HH")+"h"+DateTime.Now.ToString("mm") +"mn"+ DateTime.Now.ToString("ss")+"s"+@"-chatters.txt";
+            DateTime heure = DateTime.Now;
+            TimeSpan ecart = new TimeSpan(1, 0, 0);
+
+            string fileName = path + heure.ToString("HH") + "h00" + "-" + heure.Add(ecart).ToString("HH") + "h00-chatters.txt";
+
+            listeMembreEnLigne = Fnc_ListeMembresEnLigne();
+
+            if (File.Exists(fileName))
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.DarkRed;
+                Console.Write(" Erreur Fichier  :");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("le fichier pour ce creneau existe deja.");
+                using (StreamReader sr = new StreamReader(fileName))
+                {
+                    string line = null;
+                    line = sr.ReadLine();
+
+                    while (line != null)
+                    {
+                        if (line!="")
+                        { 
+                        listeMembreEnLigneHoraire.Add(line.ToLower());
+                        }
+                        line = sr.ReadLine();
+                    }
+                }
+
+            }
+            else
+            {
+                listeMembreEnLigneHoraire.Clear();
+            }
             try
             {
+                int compteurTotal = 0;
                 using (StreamWriter writer = new StreamWriter(fileName))
                 {
-                    foreach (string membre in Fnc_ListeMembresEnLigne())
+                    foreach (string membre in listeMembreEnLigne)
                     {
-                        writer.WriteLine("{0}", membre);
+                        if (!listeMembreEnLigneHoraire.Contains(membre.ToLower()))
+                        {
+                            writer.WriteLine("{0}", membre.ToLower());
+                            compteurTotal++;
+                        }
                     }
-                    
+                    foreach (string membre in listeMembreEnLigneHoraire)
+                    {
+                        writer.WriteLine("{0}", membre.ToLower());
+                        compteurTotal++;
+                    }
                 }
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("\n{0}", listeMembreEnLigne.Count().ToString());
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(" spartiate(s) sur le stream actuellement.");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("{0}", compteurTotal.ToString());
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(" spartiate(s) au total sur le créneau.\n");
+
             }
-            catch (Exception exp)
+            catch (Exception e)
             {
-                Console.Write(exp.Message);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.DarkRed;
+                Console.Write(" Erreur Fichier  :");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("Erreur lors de l ecriture.");
+                Console.WriteLine(e.ToString());
             }
 
         }
+
     }
 }
     
