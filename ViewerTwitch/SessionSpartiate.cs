@@ -135,7 +135,18 @@ namespace ViewerTwitch
                 Console.WriteLine("Le script poursuit son fonctionnement.");
 
             }
-            return chatters;
+            // écrit en minuscule tout les pseudos
+            List<string> chatterMini = new List<string>();
+
+            if (chatters.Count() > 0)
+            {
+                foreach (string membre in chatters)
+                {
+                    chatterMini.Add(membre.ToLower());
+                }
+            }
+
+            return chatterMini;
         }
 
         private void Fnc_heureStreamer()
@@ -181,11 +192,8 @@ namespace ViewerTwitch
             if (File.Exists(fileName))
             {
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.DarkRed;
-                Console.Write(" Erreur Fichier  :");
-                Console.ForegroundColor = ConsoleColor.White;
                 Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine("le fichier pour ce creneau existe deja.");
+                Console.WriteLine("Dernière Maj fichier : {0}h{1}mn", DateTime.Now.ToString("HH"), DateTime.Now.ToString("mm"));
                 using (StreamReader sr = new StreamReader(fileName))
                 {
                     string line = null;
@@ -209,6 +217,9 @@ namespace ViewerTwitch
             try
             {
                 int compteurTotal = 0;
+                
+                
+
                 using (StreamWriter writer = new StreamWriter(fileName))
                 {
                     foreach (string membre in listeMembreEnLigne)
@@ -218,12 +229,14 @@ namespace ViewerTwitch
                             writer.WriteLine("{0}", membre.ToLower());
                             compteurTotal++;
                         }
+
                     }
                     foreach (string membre in listeMembreEnLigneHoraire)
                     {
                         writer.WriteLine("{0}", membre.ToLower());
                         compteurTotal++;
                     }
+                    
                 }
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("\n{0}", listeMembreEnLigne.Count().ToString());
@@ -233,6 +246,28 @@ namespace ViewerTwitch
                 Console.Write("{0}", compteurTotal.ToString());
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine(" spartiate(s) au total sur le créneau.\n");
+                Console.ForegroundColor = ConsoleColor.White;
+
+                // gestion et affichage des Spartiates Deco durant l'heure
+
+                List <string> spartiateDeco = new List <string>();
+                foreach (string spartiate in listeMembreEnLigneHoraire )
+                {
+                    if (!listeMembreEnLigne.Contains(spartiate))
+                    {
+                        spartiateDeco.Add(spartiate);
+                    }
+                }
+                if (spartiateDeco.Count() > 0) {
+                    Console.Write("Spartiate(s) deconnecté(s) durant le créneau : ");    
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    foreach (string membre in spartiateDeco)
+                    {
+                        Console.Write(" {0} ", membre.ToLower());                        
+                    }
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("");
 
             }
             catch (Exception e)
