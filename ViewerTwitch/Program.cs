@@ -18,6 +18,7 @@ namespace ViewerTwitch
             myTimer.Enabled = true;
 
             Console.WriteLine("Le script est lancé");
+            Console.WriteLine("V 0.3");
             SessionSpartiate spartiate = new SessionSpartiate();
             ConsoleKeyInfo input;
             do

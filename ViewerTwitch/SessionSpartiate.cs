@@ -32,8 +32,8 @@ namespace ViewerTwitch
             // initialisation des constantes de la session
             this.localDir = Fnc_FindLocalDir() + "\\";
             this.spartiate = Fnc_ListeSpartiate();
-            this.listeMembreEnLigne = Fnc_ListeMembresEnLigne();
-            Fnc_heureStreamer(); // channelViewer et heureSession
+            listeMembreEnLigne = Fnc_ListeMembresEnLigne();
+
             Core_Session();
         }
 
@@ -137,14 +137,13 @@ namespace ViewerTwitch
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.BackgroundColor = ConsoleColor.Black;
                     Console.WriteLine(" Le serveur ne renvoit pas d'activité. Verifier le pseudo du streamer dans le fichier planning.txt.");
-
-                    // passe en misucule le nom des chatter
-                    if (chatters.Count() > 0)
+                }
+                // passe en misucule le nom des chatter
+                if (chatters.Count() > 0)
+                {
+                    foreach (string membre in chatters)
                     {
-                        foreach (string membre in chatters)
-                        {
-                            chatterMini.Add(membre.ToLower());
-                        }
+                        chatterMini.Add(membre.ToLower());
                     }
                 }
             }
@@ -160,10 +159,6 @@ namespace ViewerTwitch
                 Console.WriteLine("\n Le script poursuit son fonctionnement.\n");
 
             }
-
-
-
-
             return chatterMini;
         }
 
