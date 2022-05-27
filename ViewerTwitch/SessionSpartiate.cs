@@ -22,6 +22,7 @@ namespace ViewerTwitch
         private ViewerTwitch.JSONChatters JsonFluxChatters = new JSONChatters();
         private string heureSessionMin = "";
         private string heureSessionMax = "";
+        private int nbrChatters = 0;
 
 
         // ***************************
@@ -127,6 +128,7 @@ namespace ViewerTwitch
                 {
                     var source = reader.ReadToEnd();
                     JsonFluxChatters = JsonSerializer.Deserialize<JSONChatters>(source);
+                    nbrChatters = JsonFluxChatters.chatter_count;
                     chatters = JsonFluxChatters.ListeChatter(Fnc_ListeSpartiate());
                 }
                 if (chatters.Count() == 0)
@@ -180,7 +182,14 @@ namespace ViewerTwitch
                     {
                         heureSessionMin = words[0];
                         heureSessionMax = words[2];
-                        channelViewer = words[4].Replace("@", "");
+                        try
+                        {
+                            channelViewer = words[4].Replace("@", "");
+                        }
+                        catch
+                        {
+                            channelViewer = "";
+                                }
                     }
                     line = sr.ReadLine();
                 }
@@ -249,10 +258,14 @@ namespace ViewerTwitch
                     }
                     
                 }
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("\n{0}", listeMembreEnLigne.Count().ToString());
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.Write("\n{0}", nbrChatters);
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(" spartiate(s) sur le stream actuellement.");
+                Console.WriteLine(" viewer(s) sur le stream.");               
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("{0}", listeMembreEnLigne.Count().ToString());
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(" spartiate(s) sur le stream.");
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("{0}", compteurTotal.ToString());
                 Console.ForegroundColor = ConsoleColor.White;
