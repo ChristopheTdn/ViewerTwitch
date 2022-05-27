@@ -32,6 +32,7 @@ namespace ViewerTwitch
             // initialisation des constantes de la session
             this.localDir = Fnc_FindLocalDir() + "\\";
             this.spartiate = Fnc_ListeSpartiate();
+            this.listeMembreEnLigne = Fnc_ListeMembresEnLigne();
             Fnc_heureStreamer(); // channelViewer et heureSession
             Core_Session();
         }
@@ -56,14 +57,27 @@ namespace ViewerTwitch
             // enregistre les viewers dans le fichier
             Fnc_RecordViewersPoints();
             // renvois sur la console la liste actualisé des joueurs sur le creneau
-            foreach (string membre in Fnc_ListeMembresEnLigne())
+            if (listeMembreEnLigne.Count() > 0)
+            {
+                foreach (string membre in listeMembreEnLigne)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.Write("   > ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine("{0}", membre);
+                }
+            }
+            else
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.Write("   > ");
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine("Aucun membre en ligne.");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("{0}", membre);
             }
+
             Console.WriteLine("");
+
 
 
 
@@ -122,7 +136,7 @@ namespace ViewerTwitch
                     Console.Write(" Erreur de requete :");
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.BackgroundColor = ConsoleColor.Black;
-                    Console.WriteLine(" Le serveur ne renvois pas d'activité. Verifier le pseudo du streamer dans le fichier planning.txt.");
+                    Console.WriteLine(" Le serveur ne renvoit pas d'activité. Verifier le pseudo du streamer dans le fichier planning.txt.");
 
                     // passe en misucule le nom des chatter
                     if (chatters.Count() > 0)
@@ -141,7 +155,7 @@ namespace ViewerTwitch
                 Console.Write(" Erreur reseau  :");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine("{0}", except.Message.ToString());
+                Console.WriteLine("{0}\n Verifier le nom du streamer dans le fichier planning.txt sur cette plage horaire.", except.Message.ToString());
 
                 Console.WriteLine("\n Le script poursuit son fonctionnement.\n");
 
@@ -190,8 +204,6 @@ namespace ViewerTwitch
             TimeSpan ecart = new TimeSpan(1, 0, 0);
 
             string fileName = path + heure.ToString("HH") + "h00" + "-" + heure.Add(ecart).ToString("HH") + "h00-chatters.txt";
-
-            listeMembreEnLigne = Fnc_ListeMembresEnLigne();
 
             if (File.Exists(fileName))
             {
