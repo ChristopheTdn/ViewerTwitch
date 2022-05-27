@@ -104,6 +104,8 @@ namespace ViewerTwitch
             var url = "https://tmi.twitch.tv/group/user/" + channelViewer.ToLower() + "/chatters";
             var webrequest = (HttpWebRequest)System.Net.WebRequest.Create(url);
             List<string> chatters = null;
+            // écrit en minuscule tout les pseudos
+            List<string> chatterMini = new List<string>();
             try
             {
                 using (var response = webrequest.GetResponse())
@@ -120,8 +122,16 @@ namespace ViewerTwitch
                     Console.Write(" Erreur de requete :");
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.BackgroundColor = ConsoleColor.Black;
-                    Console.Write(" Le serveur ne renvois pas d'activité. Verifier le pseudo du streamer.");
-                    Console.WriteLine("Le script poursuit son fonctionnement.");
+                    Console.WriteLine(" Le serveur ne renvois pas d'activité. Verifier le pseudo du streamer dans le fichier planning.txt.");
+
+                    // passe en misucule le nom des chatter
+                    if (chatters.Count() > 0)
+                    {
+                        foreach (string membre in chatters)
+                        {
+                            chatterMini.Add(membre.ToLower());
+                        }
+                    }
                 }
             }
             catch (WebException except)
@@ -131,20 +141,14 @@ namespace ViewerTwitch
                 Console.Write(" Erreur reseau  :");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine("{0}", except);
-                Console.WriteLine("Le script poursuit son fonctionnement.");
+                Console.WriteLine("{0}", except.Message.ToString());
+
+                Console.WriteLine("\n Le script poursuit son fonctionnement.\n");
 
             }
-            // écrit en minuscule tout les pseudos
-            List<string> chatterMini = new List<string>();
 
-            if (chatters.Count() > 0)
-            {
-                foreach (string membre in chatters)
-                {
-                    chatterMini.Add(membre.ToLower());
-                }
-            }
+
+
 
             return chatterMini;
         }

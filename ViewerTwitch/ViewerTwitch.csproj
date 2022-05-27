@@ -8,4 +8,21 @@
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="planning.txt" />
+    <None Remove="spartiates.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="planning.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+	  <Content Include="spartiates.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
