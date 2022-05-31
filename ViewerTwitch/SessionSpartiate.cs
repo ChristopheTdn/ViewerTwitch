@@ -5,6 +5,7 @@ using System.Text;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace ViewerTwitch
 {
@@ -23,6 +24,8 @@ namespace ViewerTwitch
         private string heureSessionMin = "";
         private string heureSessionMax = "";
         private int nbrChatters = 0;
+        private string version = "";
+        private string newVersion = "";
 
 
         // ***************************
@@ -31,7 +34,12 @@ namespace ViewerTwitch
         public SessionSpartiate()
         {
             // initialisation des constantes de la session
-            this.localDir = Fnc_FindLocalDir() + "\\";
+            this.localDir = Fnc_FindLocalDir() + @"\";
+            Fnc_DLUpdateSpartiates();
+            Fnc_GetVersion();
+            Console.WriteLine(version);
+            if (version != newVersion) { Fnc_UpdateScript(); }
+
             this.spartiate = Fnc_ListeSpartiate();
             listeMembreEnLigne = Fnc_ListeMembresEnLigne();
 
@@ -88,7 +96,35 @@ namespace ViewerTwitch
         // **********************
         // * METHODES DE CLASSE *
         // **********************
-        public string Fnc_FindLocalDir()
+        private void Fnc_UpdateScript()
+        {
+            // renomme l executable
+            System.IO.File.Delete(localDir + "OLD_ViewerTwitch");
+            System.IO.File.Delete(localDir + "OLD_version");
+            System.IO.File.Move(localDir + "ViewerTwitch.exe", localDir + "OLD_ViewerTwitch");
+            System.IO.File.Move(localDir + "version.txt", localDir + "OLD_version");
+
+
+            // copie les nouvelles versions
+            System.IO.File.Move(localDir + @"cfg/ViewerTwitch.exe", localDir + "ViewerTwitch.exe");
+            System.IO.File.Move(localDir + @"cfg/version.txt", localDir + "version.txt");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.DarkRed;
+            Console.Write("\nMISE A JOUR EFFECTUEE :");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.WriteLine("\nLe script va se relancer.\n");
+
+            System.Threading.Thread.Sleep(5000);
+
+            System.Diagnostics.ProcessStartInfo myInfo = new System.Diagnostics.ProcessStartInfo();
+            myInfo.FileName = localDir + "ViewerTwitch.exe";
+            System.Diagnostics.Process.Start(myInfo);
+
+            Environment.Exit(0);
+
+        }
+        private  string Fnc_FindLocalDir()
         {
             // renvois le repertoire locale de l application
             // pour retrouver les fichiers .TXT
@@ -98,9 +134,10 @@ namespace ViewerTwitch
 
         private List<string> Fnc_ListeSpartiate()
         {
+
             // Renvois la liste des membres du discord spartiate (spartiates.txt)
             List<string> spartiates = new List<string>();
-            using (StreamReader sr = new StreamReader(localDir + "spartiates.txt"))
+            using (StreamReader sr = new StreamReader(localDir + @"cfg\spartiates.txt"))
             {
                 string line = null;
                 line = sr.ReadLine();
@@ -112,7 +149,53 @@ namespace ViewerTwitch
             }
             return spartiates;
         }
-        private List<string> Fnc_ListeMembresEnLigne()
+        private void Fnc_DLUpdateSpartiates()
+        {
+            // Dl derniere version du fichier spartiates.txt
+            try
+            {
+                if (!Directory.Exists(localDir + @"cfg\"))
+                {
+                    DirectoryInfo di = Directory.CreateDirectory(localDir + @"cfg\");
+                }
+                WebClient webClient = new WebClient();
+                webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/spartiates.txt", localDir + @"cfg\spartiates.txt");
+                webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/version.txt", localDir + @"cfg\version.txt");
+                webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/ViewerTwitch.exe", localDir + @"cfg\ViewerTwitch.exe");
+
+            }
+            catch (WebException e)
+            {
+                // Traitement des erreurs
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.DarkRed;
+                Console.Write(" Erreur reseau  :");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("{0}\n Impossible d'obtenir la derniere version des fichiers. Le script va essayer de poursuivre avec les infos qu'il possede.");
+            }
+        }
+        private void Fnc_GetVersion()
+        {
+
+                using (StreamReader sr = new StreamReader(localDir + @"\cfg\version.txt"))
+                {
+                    newVersion = sr.ReadLine();
+                }
+            try
+            {
+                using (StreamReader sr = new StreamReader(localDir + @"\version.txt"))
+                {
+                    version = sr.ReadLine();
+                }
+            }
+            catch
+            {
+                
+            }
+            
+        }
+            private List<string> Fnc_ListeMembresEnLigne()
         {
             // Renvois la liste des chatters d'un channel donné
             Fnc_heureStreamer();
@@ -195,6 +278,7 @@ namespace ViewerTwitch
                 }
             }
         }
+
         private void Fnc_RecordViewersPoints()
         {
             // Enregistre 1 point par Viewer et le sauvegarde dans un fichier Texte

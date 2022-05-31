@@ -17,7 +17,7 @@ namespace ViewerTwitch
             myTimer.Interval = 20 * 60000; // mn * 60000
             myTimer.Enabled = true;
 
-            Console.WriteLine("Le script est lancé (V 0.3)");
+            Console.WriteLine("Le script est lancé");
             SessionSpartiate spartiate = new SessionSpartiate();
             ConsoleKeyInfo input;
             do

@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <None Remove="planning.txt" />
-    <None Remove="spartiates.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,9 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <Content Include="spartiates.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Update="version.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
