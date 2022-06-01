@@ -26,7 +26,6 @@ namespace ViewerTwitch
                 if (input.Key == ConsoleKey.R)
                 { spartiate = new SessionSpartiate(); }
             } while (input.Key != ConsoleKey.Escape);
-
         }
 
         // Définition Fonctions Principales

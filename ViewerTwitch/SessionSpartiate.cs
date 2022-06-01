@@ -26,6 +26,7 @@ namespace ViewerTwitch
         private int nbrChatters = 0;
         private string version = "";
         private string newVersion = "";
+        private string[] fichiersProg = { "ViewerTwitch.exe", "version.txt", "ViewerTwitch.dll", "ViewerTwitch.pdb", "ViewerTwitch.deps.json", "ViewerTwitch.runtimeconfig.json" };
 
 
         // ***************************
@@ -34,16 +35,38 @@ namespace ViewerTwitch
         public SessionSpartiate()
         {
             // initialisation des constantes de la session
-            this.localDir = Fnc_FindLocalDir() + @"\";
+            localDir = Fnc_FindLocalDir() + @"\";
             Fnc_DLUpdateSpartiates();
             Fnc_GetVersion();
             Console.WriteLine(version);
+
+            if (!File.Exists(localDir + "planning.txt"))
+            {
+                WebClient webClient = new WebClient();
+                webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/planning.txt", localDir + @"planning.txt");
+                Console.WriteLine("Pensez à editer le fichier planning.txt pour activer les creneaux");
+            }
+
             if (version != newVersion) { Fnc_UpdateScript(); }
 
-            this.spartiate = Fnc_ListeSpartiate();
+            if (Fnc_ValideHoraire())
+            {
+            spartiate = Fnc_ListeSpartiate();
             listeMembreEnLigne = Fnc_ListeMembresEnLigne();
 
             Core_Session();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                Console.Write(" Hors créneau  :");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("\nIl est {0}h{1}. Les créneaux horaires ne sont pas atteint. patientez...",DateTime.Now.ToString("HH"), DateTime.Now.ToString("mm"));
+                Console.WriteLine("Le script continue a fonctionner...");
+            }
+
         }
 
         // **********************
@@ -96,18 +119,32 @@ namespace ViewerTwitch
         // **********************
         // * METHODES DE CLASSE *
         // **********************
+        private bool Fnc_ValideHoraire()
+        {
+            bool verif = false;
+            int heure = DateTime.Now.Hour;
+            if (heure<02 || heure>=9)
+            {
+                verif = true;
+            }
+            return verif;
+        }
         private void Fnc_UpdateScript()
         {
-            // renomme l executable
-            System.IO.File.Delete(localDir + "OLD_ViewerTwitch");
-            System.IO.File.Delete(localDir + "OLD_version");
-            System.IO.File.Move(localDir + "ViewerTwitch.exe", localDir + "OLD_ViewerTwitch");
-            System.IO.File.Move(localDir + "version.txt", localDir + "OLD_version");
 
+            
+            foreach (string fichier in fichiersProg)
+            {
+                if (File.Exists(localDir+"OLD_" +fichier))
+                {
+                    File.Delete(localDir + "OLD_"+fichier);
+                }
+                // renomme les fichier
+                File.Move(localDir + fichier, localDir + "OLD_"+ fichier);
+                // Deplace les fichiers dans leur nouvelle version
+                File.Move(localDir + @"cfg/" + fichier, localDir + fichier);
 
-            // copie les nouvelles versions
-            System.IO.File.Move(localDir + @"cfg/ViewerTwitch.exe", localDir + "ViewerTwitch.exe");
-            System.IO.File.Move(localDir + @"cfg/version.txt", localDir + "version.txt");
+            }
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.DarkRed;
             Console.Write("\nMISE A JOUR EFFECTUEE :");
@@ -160,9 +197,10 @@ namespace ViewerTwitch
                 }
                 WebClient webClient = new WebClient();
                 webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/spartiates.txt", localDir + @"cfg\spartiates.txt");
-                webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/version.txt", localDir + @"cfg\version.txt");
-                webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/ViewerTwitch.exe", localDir + @"cfg\ViewerTwitch.exe");
-
+                foreach (string fichier in fichiersProg)
+                {
+                    webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/"+fichier, localDir + @"cfg\"+fichier);
+                }
             }
             catch (WebException e)
             {
@@ -297,10 +335,11 @@ namespace ViewerTwitch
             {
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine("Dernière Maj fichier : {0}h{1}mn", DateTime.Now.ToString("HH"), DateTime.Now.ToString("mm"));
+                Console.WriteLine("Dernière Maj fichier : {0}h{1}mn", DateTime.Now.Hour, DateTime.Now.Minute);
                 using (StreamReader sr = new StreamReader(fileName))
                 {
                     string line = null;
+                    line = sr.ReadLine();
                     line = sr.ReadLine();
 
                     while (line != null)
@@ -321,23 +360,29 @@ namespace ViewerTwitch
             try
             {
                 int compteurTotal = 0;
-                
-                
 
                 using (StreamWriter writer = new StreamWriter(fileName))
                 {
+                    writer.WriteLine("{0}h00-{1}h00 :", DateTime.Now.Hour, DateTime.Now.Hour + 1);
+                    writer.WriteLine(channelViewer);
                     foreach (string membre in listeMembreEnLigne)
                     {
-                        if (!listeMembreEnLigneHoraire.Contains(membre.ToLower()))
+                       if (!listeMembreEnLigneHoraire.Contains(membre.ToLower()))
                         {
-                            writer.WriteLine("{0}", membre.ToLower());
+                            if (membre.ToLower() != channelViewer.ToLower())
+                            {
+                                writer.WriteLine("{0}", membre.ToLower());
+                            }
                             compteurTotal++;
                         }
 
                     }
                     foreach (string membre in listeMembreEnLigneHoraire)
                     {
-                        writer.WriteLine("{0}", membre.ToLower());
+                        if (membre.ToLower() != channelViewer.ToLower())
+                        {
+                            writer.WriteLine("{0}", membre.ToLower());
+                        }
                         compteurTotal++;
                     }
                     
