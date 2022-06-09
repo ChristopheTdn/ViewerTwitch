@@ -19,14 +19,16 @@ namespace ViewerTwitch
             myTimer.Enabled = true;
 
             Console.WriteLine("Le script est lancé");
-            Console.WriteLine("\n[F1]: Ouvre Planning.txt  [F2]: Ouvre Data Dir   [F5] : Refresh manuel\n");
+            afficheMenu();
             SessionSpartiate spartiate = new SessionSpartiate();
             ConsoleKeyInfo input;
             do
             {
                 input = Console.ReadKey();
                 if (input.Key == ConsoleKey.F5)
-                { spartiate = new SessionSpartiate(); }
+                {
+                    afficheMenu();
+                    spartiate = new SessionSpartiate(); }
                 if (input.Key == ConsoleKey.F1)
                 { 
                     Interract interract = new Interract(input); 
@@ -52,7 +54,7 @@ namespace ViewerTwitch
         }
         private static void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            Console.WriteLine("\n[F1]: Ouvre Planning.txt  [F2]: Ouvre Data Dir  [F5] : Refresh manuel\n");
+
             try
             {
                 SessionSpartiate spartiate = new SessionSpartiate();
@@ -61,6 +63,21 @@ namespace ViewerTwitch
             {
                 Console.WriteLine("Probleme d'erreur lors de la requete : {0}", except.ToString());
             }
+        }
+        private static void afficheMenu()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.Write("\n[F1]");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" : Ouvre Planning.txt    ");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.Write("[F2]");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" : Ouvre Data Dir   ");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.Write("[F5]");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" : Refresh manuel\n\n");
         }
       
     }
