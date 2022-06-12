@@ -24,7 +24,7 @@ namespace ViewerTwitch
         {
             localDir = Fnc_FindLocalDir() + @"\";
             if (input.Key == ConsoleKey.F1)
-            { OpenPlanningTxt(); }
+            { AffichePlanningTxt(); }
             if (input.Key == ConsoleKey.F2)
             { openDataDir(); }
         }
@@ -37,13 +37,14 @@ namespace ViewerTwitch
         }
 
 
-        private void OpenPlanningTxt()
+        private void AffichePlanningTxt()
         {
             string rep = Directory.GetCurrentDirectory();
             try
             {
-                Process.Start("notepad.exe", rep + @"\planning.txt");
-
+                StreamReader reader = File.OpenText(rep + @"\planning.txt");
+                string planning = reader.ReadToEnd();
+                Console.WriteLine("Planning actuel :\n{0}", planning);
             }
             catch { }
         }

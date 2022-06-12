@@ -52,16 +52,6 @@ namespace ViewerTwitch
         }
 
         // Définition Fonctions Principales
-        private static void OpenPlanningTxt()
-        {
-            string rep = Directory.GetCurrentDirectory();
-            try
-            {
-                Process.Start("notepad.exe",rep + @"\planning.txt");
-                
-            }
-            catch { }   
-        }
         private static void OnTimedEvent(object source, ElapsedEventArgs e)
         {
 
@@ -83,7 +73,7 @@ namespace ViewerTwitch
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write("\n[F1]");
             Console.ForegroundColor = ConsoleColor.White;
-            Console.Write(" : Ouvre Planning.txt    ");
+            Console.Write(" : Affiche Planning.txt    ");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write("[F2]");
             Console.ForegroundColor = ConsoleColor.White;
