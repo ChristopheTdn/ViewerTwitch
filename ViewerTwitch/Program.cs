@@ -15,11 +15,18 @@ namespace ViewerTwitch
             // TIMER PRINCIPAL
             System.Timers.Timer myTimer = new System.Timers.Timer();
             myTimer.Elapsed += (sender, e) => OnTimedEvent(sender, e);
-            myTimer.Interval = 20 * 60000; // mn * 60000
+            myTimer.Interval = 15 * 60000; // mn * 60000
             myTimer.Enabled = true;
 
+            static Task ActualisePlanning() => new GBot().MainAsync();
+
             Console.WriteLine("Le script est lancé");
+            // Actualise le planning 
+            ActualisePlanning();
+            System.Threading.Thread.Sleep(5000);
+
             afficheMenu();
+
             SessionSpartiate spartiate = new SessionSpartiate();
             ConsoleKeyInfo input;
             do
@@ -27,6 +34,9 @@ namespace ViewerTwitch
                 input = Console.ReadKey();
                 if (input.Key == ConsoleKey.F5)
                 {
+                    // Actualise le planning 
+                    ActualisePlanning();
+                    System.Threading.Thread.Sleep(5000);
                     afficheMenu();
                     spartiate = new SessionSpartiate(); }
                 if (input.Key == ConsoleKey.F1)
@@ -57,6 +67,10 @@ namespace ViewerTwitch
 
             try
             {
+                static Task ActualisePlanning() => new GBot().MainAsync();
+                ActualisePlanning();
+                System.Threading.Thread.Sleep(5000);
+                afficheMenu();
                 SessionSpartiate spartiate = new SessionSpartiate();
             }
             catch (Exception except)
