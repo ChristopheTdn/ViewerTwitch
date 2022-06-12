@@ -55,11 +55,15 @@ namespace ViewerTwitch
                 foreach (string line in messageCut)
                 {
                     string[] lineCut = line.Split(' ');
-                    string name = lineCut[4];
-                    if (name.Substring(0, 1) == "<")
-                    {
-                        ulong id = ulong.Parse(lineCut[4].Replace("<", "").Replace(">", "").Replace("@", ""));
-                        name = "@" + _client.GetUserAsync(id).Result.Username.ToString();
+                string name = "";
+                    if (lineCut.Length >= 5 && lineCut[4]!="")
+                    { 
+                        name = lineCut[4];
+                        if (name.Substring(0, 1) == "<")
+                        {
+                            ulong id = ulong.Parse(lineCut[4].Replace("<", "").Replace(">", "").Replace("@", ""));
+                            name = "@" + _client.GetUserAsync(id).Result.Username.ToString();
+                        }
                     }
                     string lineParse = lineCut[0] + " " + lineCut[1] + " " + lineCut[2] + " " + lineCut[3] + " " + name;
                     messageParse += lineParse + '\n';

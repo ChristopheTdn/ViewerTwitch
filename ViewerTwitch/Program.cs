@@ -15,7 +15,7 @@ namespace ViewerTwitch
             // TIMER PRINCIPAL
             System.Timers.Timer myTimer = new System.Timers.Timer();
             myTimer.Elapsed += (sender, e) => OnTimedEvent(sender, e);
-            myTimer.Interval = 15 * 60000; // mn * 60000
+            myTimer.Interval = 10 * 60000; // mn * 60000
             myTimer.Enabled = true;
 
             static Task ActualisePlanning() => new GBot().MainAsync();
