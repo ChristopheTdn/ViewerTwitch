@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,15 +6,26 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
+    <StartupObject>ViewerTwitch.Program</StartupObject>
+    <ApplicationIcon>spartiate.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="planning.txt" />
+    <None Remove="token.txt" />
+    <None Remove="tokenSP.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="planning.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="spartiate.ico" />
+    <Content Include="token.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tokenSP.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
@@ -23,9 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="token.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="version.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

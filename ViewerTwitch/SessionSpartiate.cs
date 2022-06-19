@@ -37,17 +37,7 @@ namespace ViewerTwitch
             // initialisation des constantes de la session
             localDir = Fnc_FindLocalDir() + @"\";
             Fnc_DLUpdateSpartiates();
-            Fnc_GetVersion();
             Console.WriteLine(version);
-
-            if (!File.Exists(localDir + "planning.txt"))
-            {
-                WebClient webClient = new WebClient();
-                webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/planning.txt", localDir + @"planning.txt");
-                Console.WriteLine("Pensez à editer le fichier planning.txt pour activer les creneaux");
-            }
-
-            if (version != newVersion) { Fnc_UpdateScript(); }
 
             if (Fnc_ValideHoraire())
             {
@@ -129,38 +119,7 @@ namespace ViewerTwitch
             }
             return verif;
         }
-        private void Fnc_UpdateScript()
-        {
-
-            
-            foreach (string fichier in fichiersProg)
-            {
-                if (File.Exists(localDir+"OLD_" +fichier))
-                {
-                    File.Delete(localDir + "OLD_"+fichier);
-                }
-                // renomme les fichier
-                File.Move(localDir + fichier, localDir + "OLD_"+ fichier);
-                // Deplace les fichiers dans leur nouvelle version
-                File.Move(localDir + @"cfg/" + fichier, localDir + fichier);
-
-            }
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.BackgroundColor = ConsoleColor.DarkRed;
-            Console.Write("\nMISE A JOUR EFFECTUEE :");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.WriteLine("\nLe script va se relancer.\n");
-
-            System.Threading.Thread.Sleep(5000);
-
-            System.Diagnostics.ProcessStartInfo myInfo = new System.Diagnostics.ProcessStartInfo();
-            myInfo.FileName = localDir + "ViewerTwitch.exe";
-            System.Diagnostics.Process.Start(myInfo);
-
-            Environment.Exit(0);
-
-        }
+        
         private  string Fnc_FindLocalDir()
         {
             // renvois le repertoire locale de l application
@@ -213,32 +172,14 @@ namespace ViewerTwitch
                 Console.WriteLine("{0}\n Impossible d'obtenir la derniere version des fichiers. Le script va essayer de poursuivre avec les infos qu'il possede.");
             }
         }
-        private void Fnc_GetVersion()
-        {
-
-                using (StreamReader sr = new StreamReader(localDir + @"\cfg\version.txt"))
-                {
-                    newVersion = sr.ReadLine();
-                }
-            try
-            {
-                using (StreamReader sr = new StreamReader(localDir + @"\version.txt"))
-                {
-                    version = sr.ReadLine();
-                }
-            }
-            catch
-            {
-                
-            }
-            
-        }
-            private List<string> Fnc_ListeMembresEnLigne()
+        
+        private List<string> Fnc_ListeMembresEnLigne()
         {
             // Renvois la liste des chatters d'un channel donné
             Fnc_heureStreamer();
+
             var url = "https://tmi.twitch.tv/group/user/" + channelViewer.ToLower() + "/chatters";
-            var webrequest = (HttpWebRequest)System.Net.WebRequest.Create(url);
+            var webrequest = (HttpWebRequest)WebRequest.Create(url);
             List<string> chatters = null;
             // écrit en minuscule tout les pseudos
             List<string> chatterMini = new List<string>();
@@ -319,7 +260,7 @@ namespace ViewerTwitch
 
         private void Fnc_RecordViewersPoints()
         {
-            // Enregistre 1 point par Viewer et le sauvegarde dans un fichier Texte
+            // Enregistre 1 Viewer par creneau horaire et le sauvegarde dans un fichier Texte
 
             string path = localDir + @"data\" + DateTime.Now.ToString("yyyy-MM-dd") + @"\";
             if (!Directory.Exists(path))
