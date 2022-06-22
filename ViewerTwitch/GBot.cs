@@ -30,7 +30,6 @@ namespace ViewerTwitch
             }
          public async Task MainAsync()
             {
-
                 string token = getToken();
                 // Tokens should be considered secret data, and never hard-coded.
                 await _client.LoginAsync(TokenType.Bot, token);
@@ -67,7 +66,6 @@ namespace ViewerTwitch
 
             switch (jour)
             {
-
                 case DayOfWeek.Monday:
                     ChannelID = 979855578144858163;
                     break;

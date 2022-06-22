@@ -4,6 +4,9 @@ using System.Text.Json;
 using System.Net;
 using System.Timers;
 using System.Diagnostics;
+using System.Reflection;
+using System.Windows;
+
 
 namespace ViewerTwitch
 {
@@ -19,8 +22,23 @@ namespace ViewerTwitch
             myTimer.Enabled = true;
 
             static Task ActualisePlanning() => new GBot().MainAsync();
-
-            Console.WriteLine("Le script est lancé");
+          
+            Assembly execAssembly = Assembly.GetCallingAssembly();
+            AssemblyName name = execAssembly.GetName();
+            Console.Title = (string.Format("{0}{1} v.{2}.{3}.{4}",
+                Environment.NewLine,
+                name.Name.ToString(),
+                name.Version.Major.ToString(),
+                name.Version.Minor.ToString(),
+                name.Version.Build.ToString()
+                ));
+            Console.WriteLine(string.Format("{0}{1} v.{2}.{3}.{4}",
+                Environment.NewLine,
+                name.Name.ToString().ToUpper(),
+                name.Version.Major.ToString(),
+                name.Version.Minor.ToString(),
+                name.Version.Build.ToString()
+                ));
             // Actualise le planning 
             ActualisePlanning();
             System.Threading.Thread.Sleep(5000);

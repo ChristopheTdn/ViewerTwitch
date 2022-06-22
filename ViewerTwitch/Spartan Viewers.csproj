@@ -8,6 +8,7 @@
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
     <StartupObject>ViewerTwitch.Program</StartupObject>
     <ApplicationIcon>spartiate.ico</ApplicationIcon>
+    <Version>1.0.0622</Version>
   </PropertyGroup>
 
   <ItemGroup>

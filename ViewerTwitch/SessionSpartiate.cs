@@ -24,10 +24,7 @@ namespace ViewerTwitch
         private string heureSessionMin = "";
         private string heureSessionMax = "";
         private int nbrChatters = 0;
-        private string version = "";
-        private string newVersion = "";
-        private string[] fichiersProg = { "ViewerTwitch.exe", "version.txt", "ViewerTwitch.dll", "ViewerTwitch.pdb", "ViewerTwitch.deps.json", "ViewerTwitch.runtimeconfig.json" };
-
+       
 
         // ***************************
         // * CONSTRUCTEUR PAR DEFAUT *
@@ -37,7 +34,6 @@ namespace ViewerTwitch
             // initialisation des constantes de la session
             localDir = Fnc_FindLocalDir() + @"\";
             Fnc_DLUpdateSpartiates();
-            Console.WriteLine(version);
 
             if (Fnc_ValideHoraire())
             {
@@ -99,11 +95,6 @@ namespace ViewerTwitch
             }
 
             Console.WriteLine("");
-
-
-
-
-
         }
 
         // **********************
@@ -156,10 +147,6 @@ namespace ViewerTwitch
                 }
                 WebClient webClient = new WebClient();
                 webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/spartiates.txt", localDir + @"cfg\spartiates.txt");
-                foreach (string fichier in fichiersProg)
-                {
-                    webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/"+fichier, localDir + @"cfg\"+fichier);
-                }
             }
             catch (WebException e)
             {
@@ -169,7 +156,7 @@ namespace ViewerTwitch
                 Console.Write(" Erreur reseau  :");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine("{0}\n Impossible d'obtenir la derniere version des fichiers. Le script va essayer de poursuivre avec les infos qu'il possede.");
+                Console.WriteLine("{0}\n Impossible d'obtenir la dernière version du fichier spartiates.txt. Le script va essayer de poursuivre avec les infos qu'il possede.");
             }
         }
         
