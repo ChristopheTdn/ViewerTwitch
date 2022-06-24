@@ -14,7 +14,7 @@ namespace ViewerTwitch
     {
         static void Main(string[] args)
         {
-
+            
             // TIMER PRINCIPAL
             System.Timers.Timer myTimer = new System.Timers.Timer();
             myTimer.Elapsed += (sender, e) => OnTimedEvent(sender, e);
@@ -39,6 +39,9 @@ namespace ViewerTwitch
                 name.Version.Minor.ToString(),
                 name.Version.Build.ToString()
                 ));
+
+
+
             // Actualise le planning 
             ActualisePlanning();
             System.Threading.Thread.Sleep(5000);
@@ -88,6 +91,7 @@ namespace ViewerTwitch
         }
         private static void afficheMenu()
         {
+
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write("\n[F1]");
             Console.ForegroundColor = ConsoleColor.White;

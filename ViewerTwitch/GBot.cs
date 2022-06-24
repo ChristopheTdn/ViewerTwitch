@@ -102,12 +102,14 @@ namespace ViewerTwitch
          private string parseMsg(string message)
             {
                 string[] messageCut = message.Split("\n");
+                
                 string messageParse = "";
 
 
             foreach (string line in messageCut)
                 {
-                    string[] lineCut = line.Split(' ');
+                line.Replace("  ", " "); // correction bug double espace dans la liste spartiate
+                string[] lineCut = line.Split(' ');
                 string name = "";
 
                 if (lineCut.Length >= 5 && lineCut[4]!="")
