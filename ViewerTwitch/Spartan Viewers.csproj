@@ -8,19 +8,15 @@
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
     <StartupObject>ViewerTwitch.Program</StartupObject>
     <ApplicationIcon>spartiate.ico</ApplicationIcon>
-    <Version>1.0.0624</Version>
+    <Version>1.0.0629</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="planning.txt" />
     <None Remove="token.txt" />
     <None Remove="tokenSP.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="planning.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
     <Content Include="spartiate.ico" />
     <Content Include="token.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -32,12 +28,6 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.7.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="version.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

@@ -32,13 +32,15 @@ namespace ViewerTwitch
                 name.Version.Minor.ToString(),
                 name.Version.Build.ToString()
                 ));
-            Console.WriteLine(string.Format("{0}{1} v.{2}.{3}.{4}",
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine(string.Format("{0}{1} v.{2}.{3}.{4} {0}",
                 Environment.NewLine,
                 name.Name.ToString().ToUpper(),
                 name.Version.Major.ToString(),
                 name.Version.Minor.ToString(),
                 name.Version.Build.ToString()
                 ));
+            Console.ForegroundColor = ConsoleColor.White;
 
 
 
