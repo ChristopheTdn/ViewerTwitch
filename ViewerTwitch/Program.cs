@@ -32,7 +32,7 @@ namespace ViewerTwitch
                 name.Version.Minor.ToString(),
                 name.Version.Build.ToString()
                 ));
-            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine(string.Format("{0}{1} v.{2}.{3}.{4} {0}",
                 Environment.NewLine,
                 name.Name.ToString().ToUpper(),

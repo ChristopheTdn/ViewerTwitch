@@ -108,16 +108,29 @@ namespace ViewerTwitch
 
             foreach (string line in messageCut)
                 {
-                line.Replace("  ", " "); // correction bug double espace dans la liste spartiate
                 string[] lineCut = line.Split(' ');
                 string name = "";
 
-                if (lineCut.Length >= 5 && lineCut[4]!="")
+                // gestion des problemes de mise en forme dans la liste (espace en trop)
+                List <string> lineClean = new List<string>();
+                foreach (string word in lineCut)
+                {
+                    if (word=="")
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        lineClean.Add(word);
+                    }
+                }
+
+                if (lineClean.Count >= 5 && lineClean[4]!="")
                     { 
-                        name = lineCut[4];
+                        name = lineClean[4];
                         if (name.Substring(0, 1) == "<")
                         {
-                            ulong id = ulong.Parse(lineCut[4].Replace("<", "").Replace(">", "").Replace("@", ""));
+                            ulong id = ulong.Parse(lineClean[4].Replace("<", "").Replace(">", "").Replace("@", ""));
                             var nick = _client.GetGuild(951887546273640598).GetUser(id).Nickname;
                             if (nick != null)
                             {
@@ -129,7 +142,7 @@ namespace ViewerTwitch
                             }
                         }
                     }
-                    string lineParse = lineCut[0] + " " + lineCut[1] + " " + lineCut[2] + " " + lineCut[3] + " " + name;
+                    string lineParse = lineClean[0] + " " + lineClean[1] + " " + lineClean[2] + " " + lineClean[3] + " " + name;
                     messageParse += lineParse + '\n';
                 }
                 return messageParse;
