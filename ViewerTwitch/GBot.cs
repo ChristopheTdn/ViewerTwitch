@@ -10,9 +10,10 @@ using Discord.WebSocket;
 
 namespace ViewerTwitch
 {
-    internal class GBot
+    public class GBot
     {
-         private readonly DiscordSocketClient _client;
+        private readonly DiscordSocketClient _client;
+        public List<string> spartiateMembers = new List<string>(); 
 
 
         public GBot()
@@ -52,7 +53,7 @@ namespace ViewerTwitch
             var messages = await channel.GetMessagesAsync(10).FlattenAsync();
             string message = parseMsg(messages.Last().ToString());
             sauvegardePlanning(message);
-
+            getListeUser();
          }
 
         private ulong Fnc_GetChannelID()
@@ -149,12 +150,47 @@ namespace ViewerTwitch
          }
         private void sauvegardePlanning(string message)
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Running process GBot...");
             StreamWriter writer = File.CreateText("planning.txt");
             writer.WriteLine(message);
             writer.Close();
-            Console.WriteLine("planning.txt actualisé et sauvegardé...");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write(" > ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\"planning.txt\" actualisé et sauvegardé...");
+        }
+        private void getListeUser()
+        {
+            // dl derniere version du fichier spartiates.txt
+            try
+            {
+                StreamWriter writer = File.CreateText("spartiates.txt");
+                foreach (var user in _client.Guilds.ToList()[0].Users.ToList())
+                {
+                    writer.WriteLine(user.DisplayName);
+                }
+                writer.Close();
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.Write(" > ");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\"spartiates.txt\" actualisé et sauvegardé...");
+            }
+            catch (Exception e)
+            {
+                // Traitement des erreurs
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.DarkRed;
+                Console.Write(" Erreur reseau  :");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("{0}\n Impossible d'obtenir la dernière version du fichier spartiates.txt. Le script va essayer de poursuivre avec les infos qu'il possede.");
+            }
         }
     }
+
+
 }
+
 
 

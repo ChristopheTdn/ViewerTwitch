@@ -22,10 +22,10 @@ namespace ViewerTwitch
             myTimer.Enabled = true;
 
             static Task ActualisePlanning() => new GBot().MainAsync();
-          
+            
             Assembly execAssembly = Assembly.GetCallingAssembly();
             AssemblyName name = execAssembly.GetName();
-            Console.Title = (string.Format("{0}{1} v.{2}.{3}.{4}",
+            Console.Title = (string.Format("{0}   {1} v.{2}.{3}.{4}",
                 Environment.NewLine,
                 name.Name.ToString(),
                 name.Version.Major.ToString(),
@@ -33,7 +33,7 @@ namespace ViewerTwitch
                 name.Version.Build.ToString()
                 ));
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine(string.Format("{0}{1} v.{2}.{3}.{4} {0}",
+            Console.WriteLine(string.Format("{0}  {1} v.{2}.{3}.{4} {0}",
                 Environment.NewLine,
                 name.Name.ToString().ToUpper(),
                 name.Version.Major.ToString(),
@@ -42,10 +42,9 @@ namespace ViewerTwitch
                 ));
             Console.ForegroundColor = ConsoleColor.White;
 
-
-
             // Actualise le planning 
             ActualisePlanning();
+
             System.Threading.Thread.Sleep(5000);
 
             afficheMenu();

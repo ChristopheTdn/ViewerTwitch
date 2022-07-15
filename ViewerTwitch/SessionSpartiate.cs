@@ -6,6 +6,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Net.Http;
 
 namespace ViewerTwitch
 {
@@ -24,7 +25,7 @@ namespace ViewerTwitch
         private string heureSessionMin = "";
         private string heureSessionMax = "";
         private int nbrChatters = 0;
-       
+
 
         // ***************************
         // * CONSTRUCTEUR PAR DEFAUT *
@@ -33,14 +34,13 @@ namespace ViewerTwitch
         {
             // initialisation des constantes de la session
             localDir = Fnc_FindLocalDir() + @"\";
-            Fnc_DLUpdateSpartiates();
 
             if (Fnc_ValideHoraire())
             {
-            spartiate = Fnc_ListeSpartiate();
-            listeMembreEnLigne = Fnc_ListeMembresEnLigne();
+                spartiate = Fnc_ListeSpartiate();
+                listeMembreEnLigne = Fnc_ListeMembresEnLigne();
 
-            Core_Session();
+                Core_Session();
             }
             else
             {
@@ -49,7 +49,7 @@ namespace ViewerTwitch
                 Console.Write(" Hors créneau  :");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine("\nIl est {0}h{1}. Les créneaux horaires ne sont pas atteint. patientez...",DateTime.Now.ToString("HH"), DateTime.Now.ToString("mm"));
+                Console.WriteLine("\nIl est {0}h{1}. Les créneaux horaires ne sont pas atteint. patientez...", DateTime.Now.ToString("HH"), DateTime.Now.ToString("mm"));
                 Console.WriteLine("Le script continue a fonctionner...");
             }
 
@@ -104,14 +104,14 @@ namespace ViewerTwitch
         {
             bool verif = false;
             int heure = DateTime.Now.Hour;
-            if (heure<02 || heure>=9)
+            if (heure < 02 || heure >= 9)
             {
                 verif = true;
             }
             return verif;
         }
-        
-        private  string Fnc_FindLocalDir()
+
+        private string Fnc_FindLocalDir()
         {
             // renvois le repertoire locale de l application
             // pour retrouver les fichiers .TXT
@@ -124,7 +124,7 @@ namespace ViewerTwitch
 
             // Renvois la liste des membres du discord spartiate (spartiates.txt)
             List<string> spartiates = new List<string>();
-            using (StreamReader sr = new StreamReader(localDir + @"cfg\spartiates.txt"))
+            using (StreamReader sr = new StreamReader(localDir + @"spartiates.txt"))
             {
                 string line = null;
                 line = sr.ReadLine();
@@ -136,30 +136,7 @@ namespace ViewerTwitch
             }
             return spartiates;
         }
-        private void Fnc_DLUpdateSpartiates()
-        {
-            // Dl derniere version du fichier spartiates.txt
-            try
-            {
-                if (!Directory.Exists(localDir + @"cfg\"))
-                {
-                    DirectoryInfo di = Directory.CreateDirectory(localDir + @"cfg\");
-                }
-                WebClient webClient = new WebClient();
-                webClient.DownloadFile("http://51.178.81.30/ftp/twviewers/spartiates.txt", localDir + @"cfg\spartiates.txt");
-            }
-            catch (WebException e)
-            {
-                // Traitement des erreurs
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.DarkRed;
-                Console.Write(" Erreur reseau  :");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine("{0}\n Impossible d'obtenir la dernière version du fichier spartiates.txt. Le script va essayer de poursuivre avec les infos qu'il possede.");
-            }
-        }
-        
+   
         private List<string> Fnc_ListeMembresEnLigne()
         {
             // Renvois la liste des chatters d'un channel donné
