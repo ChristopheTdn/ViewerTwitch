@@ -13,8 +13,8 @@ namespace ViewerTwitch
     public class GBot
     {
         private readonly DiscordSocketClient _client;
-        public List<string> spartiateMembers = new List<string>(); 
-
+        public List<string> spartiateMembers = new List<string>();
+        private string _arg = ""; 
 
         public GBot()
             {
@@ -24,13 +24,14 @@ namespace ViewerTwitch
                     AlwaysDownloadUsers = true
                 };
 
-
+                
                 _client = new DiscordSocketClient(config);
                 // Subscribing to client events, so that we may receive them whenever they're invoked.
                 _client.Ready += ReadyAsync;
             }
-         public async Task MainAsync()
+         public async Task MainAsync(string arg)
             {
+                _arg = arg;
                 string token = getToken();
                 // Tokens should be considered secret data, and never hard-coded.
                 await _client.LoginAsync(TokenType.Bot, token);
@@ -46,15 +47,22 @@ namespace ViewerTwitch
             // connection and it is now safe to access the cache.
          private async Task ReadyAsync()
          {
-            ulong channelID = Fnc_GetChannelID();
+            if (_arg == "Read")
+            {
+                ulong channelID = Fnc_GetChannelID();
 
-            var channel = _client.GetChannel(channelID) as SocketTextChannel;
-            if (channel == null) return;
-            var messages = await channel.GetMessagesAsync(10).FlattenAsync();
-            string message = parseMsg(messages.Last().ToString());
-            sauvegardePlanning(message);
-            getListeUser();
-         }
+                var channel = _client.GetChannel(channelID) as SocketTextChannel;
+                if (channel == null) return;
+                var messages = await channel.GetMessagesAsync(10).FlattenAsync();
+                string message = parseMsg(messages.Last().ToString());
+                sauvegardePlanning(message);
+                getListeUser();
+            }
+            if (_arg == "Write")
+            {
+                Ecrire_Discord();
+            }
+        }
 
         private ulong Fnc_GetChannelID()
         {
@@ -91,12 +99,48 @@ namespace ViewerTwitch
             }
             return ChannelID;
         }
+        private ulong Fnc_GetChannelID_Write()
+        {
+            ulong ChannelID = 0;
+            DayOfWeek jour = DateTime.Now.DayOfWeek;
+            if (DateTime.Now.Hour < 2)
+            {
+                jour = DateTime.Now.AddDays(-1).DayOfWeek;
+            }
+
+            switch (jour)
+            {
+                case DayOfWeek.Monday:
+                    ChannelID = 997927665367535656;
+                    break;
+                case DayOfWeek.Tuesday:
+                    ChannelID = 997934036599197757;
+                    break;
+                case DayOfWeek.Wednesday:
+                    ChannelID = 997942533722226818;
+                    break;
+                case DayOfWeek.Thursday:
+                    ChannelID = 997943662564626432;
+                    break;
+                case DayOfWeek.Friday:
+                    ChannelID = 997949515258675250;
+                    break;
+                case DayOfWeek.Saturday:
+                    ChannelID = 985535043285942292;
+                    break;
+                case DayOfWeek.Sunday:
+                    ChannelID = 979862708251951184;
+                    break;
+            }
+            return ChannelID;
+        }
 
 
 
         private string getToken()
             {
-                StreamReader reader = File.OpenText("tokenSP.txt");
+                StreamReader ?reader;
+                reader = File.OpenText("tokenSP.txt");
                 string token = reader.ReadLine();
                 return token;
             }
@@ -171,6 +215,7 @@ namespace ViewerTwitch
                     writer.WriteLine(user.DisplayName);
                 }
                 writer.Close();
+
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.Write(" > ");
                 Console.ForegroundColor = ConsoleColor.White;
@@ -186,6 +231,17 @@ namespace ViewerTwitch
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.WriteLine("{0}\n Impossible d'obtenir la dernière version du fichier spartiates.txt. Le script va essayer de poursuivre avec les infos qu'il possede.");
             }
+        }
+        private void Ecrire_Discord()
+        {
+            ulong channelID_Write = Fnc_GetChannelID_Write();
+            string messageDiscord = "";
+            using (StreamReader sr = new StreamReader("discord.txt"))
+            {
+                messageDiscord=sr.ReadToEnd();
+            }
+                _client.GetGuild(951887546273640598).GetTextChannel(channelID_Write).SendMessageAsync(messageDiscord);
+
         }
     }
 

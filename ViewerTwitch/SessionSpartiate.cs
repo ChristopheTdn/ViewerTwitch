@@ -235,12 +235,12 @@ namespace ViewerTwitch
             TimeSpan ecart = new TimeSpan(1, 0, 0);
 
             string fileName = path + heure.ToString("HH") + "h00" + "-" + heure.Add(ecart).ToString("HH") + "h00-chatters.txt";
-
+            string discord = "discord.txt"; 
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.WriteLine("Dernière Maj fichier : {0}h{1}mn", DateTime.Now.Hour, DateTime.Now.Minute);
             if (File.Exists(fileName))
             {
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine("Dernière Maj fichier : {0}h{1}mn", DateTime.Now.Hour, DateTime.Now.Minute);
                 using (StreamReader sr = new StreamReader(fileName))
                 {
                     string line = null;
@@ -264,8 +264,36 @@ namespace ViewerTwitch
             }
             try
             {
+                // ecrire fichier DISCORD.TXT
+                using (StreamWriter writer = new StreamWriter("discord.txt"))
+                {
+                    writer.WriteLine("**{0}h00-{1}h00 :**", DateTime.Now.Hour, DateTime.Now.Hour + 1);
+                    writer.WriteLine("`"+channelViewer);
+                    foreach (string membre in listeMembreEnLigne)
+                    {
+                        if (!listeMembreEnLigneHoraire.Contains(membre.ToLower()))
+                        {
+                            if (membre.ToLower() != channelViewer.ToLower())
+                            {
+                                writer.WriteLine("{0}", membre.ToLower());
+                            };
+                        }
+
+                    }
+                    foreach (string membre in listeMembreEnLigneHoraire)
+                    {
+                        if (membre.ToLower() != channelViewer.ToLower())
+                        {
+                            writer.WriteLine("{0}", membre.ToLower());
+                        }
+                    }
+                    writer.WriteLine("`");
+
+                }
+
                 int compteurTotal = 0;
 
+                // ecrire fichier horaire dans le repertoire data
                 using (StreamWriter writer = new StreamWriter(fileName))
                 {
                     writer.WriteLine("{0}h00-{1}h00 :", DateTime.Now.Hour, DateTime.Now.Hour + 1);

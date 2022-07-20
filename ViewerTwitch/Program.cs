@@ -21,7 +21,13 @@ namespace ViewerTwitch
             myTimer.Interval = 10 * 60000; // mn * 60000
             myTimer.Enabled = true;
 
-            static Task ActualisePlanning() => new GBot().MainAsync();
+            // TIMER PRINCIPAL
+            System.Timers.Timer myTimer2 = new System.Timers.Timer();
+            myTimer2.Elapsed += (sender, e) => OnTimedEvent_ECRIRE(sender, e);
+            myTimer2.Interval = 1 * 60000; // mn * 60000
+            myTimer2.Enabled = true;
+
+            static Task ActualisePlanning() => new GBot().MainAsync("Read");
             
             Assembly execAssembly = Assembly.GetCallingAssembly();
             AssemblyName name = execAssembly.GetName();
@@ -79,7 +85,7 @@ namespace ViewerTwitch
 
             try
             {
-                static Task ActualisePlanning() => new GBot().MainAsync();
+                static Task ActualisePlanning() => new GBot().MainAsync("Read");
                 ActualisePlanning();
                 System.Threading.Thread.Sleep(5000);
                 afficheMenu();
@@ -90,6 +96,26 @@ namespace ViewerTwitch
                 Console.WriteLine("Probleme d'erreur lors de la requete : {0}", except.ToString());
             }
         }
+        private static void OnTimedEvent_ECRIRE(object source, ElapsedEventArgs e)
+        {
+
+            try
+            {
+                int minute = DateTime.Now.Minute;
+                if (minute == 59)
+                {
+
+                Console.WriteLine("> Message Discord Transmis.");
+                static Task EcritPresence() => new GBot().MainAsync("Write");
+                EcritPresence();
+                }
+            }
+            catch (Exception except)
+            {
+                Console.WriteLine("Probleme d'erreur lors de la requete : {0}", except.ToString());
+            }
+        }
+
         private static void afficheMenu()
         {
 
