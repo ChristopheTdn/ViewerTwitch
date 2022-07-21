@@ -5,7 +5,6 @@ using System.Net;
 using System.Timers;
 using System.Diagnostics;
 using System.Reflection;
-using System.Windows;
 
 
 namespace ViewerTwitch
@@ -98,24 +97,36 @@ namespace ViewerTwitch
         }
         private static void OnTimedEvent_ECRIRE(object source, ElapsedEventArgs e)
         {
-
-            try
+            if (Fnc_ValideHoraire()==true)
             {
-                int minute = DateTime.Now.Minute;
-                if (minute == 59)
+                try
                 {
+                    int minute = DateTime.Now.Minute;
+                    if (minute == 59)
+                    {
 
-                Console.WriteLine("> Message Discord Transmis.");
-                static Task EcritPresence() => new GBot().MainAsync("Write");
-                EcritPresence();
+                        Console.WriteLine("> Message Discord Transmis.");
+                        static Task EcritPresence() => new GBot().MainAsync("Write");
+                        EcritPresence();
+                    }
+                }
+                catch (Exception except)
+                {
+                    Console.WriteLine("Probleme d'erreur lors de la requete : {0}", except.ToString());
                 }
             }
-            catch (Exception except)
-            {
-                Console.WriteLine("Probleme d'erreur lors de la requete : {0}", except.ToString());
-            }
-        }
 
+        }
+        private static bool Fnc_ValideHoraire()
+        {
+            bool verif = false;
+            int heure = DateTime.Now.Hour;
+            if (heure < 02 || heure >= 9)
+            {
+                verif = true;
+            }
+            return verif;
+        }
         private static void afficheMenu()
         {
 

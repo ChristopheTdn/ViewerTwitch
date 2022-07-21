@@ -40,7 +40,6 @@ namespace ViewerTwitch
 
                 // Block the program until it is closed.
                 await Task.Delay(10000);
-
             }
 
             // The Ready event indicates that the client has opened a
