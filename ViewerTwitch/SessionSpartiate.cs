@@ -34,25 +34,10 @@ namespace ViewerTwitch
         {
             // initialisation des constantes de la session
             localDir = Fnc_FindLocalDir() + @"\";
+            spartiate = Fnc_ListeSpartiate();
+            listeMembreEnLigne = Fnc_ListeMembresEnLigne();
 
-            if (Fnc_ValideHoraire())
-            {
-                spartiate = Fnc_ListeSpartiate();
-                listeMembreEnLigne = Fnc_ListeMembresEnLigne();
-
-                Core_Session();
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.DarkYellow;
-                Console.Write(" Hors créneau  :");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine("\nIl est {0}h{1}. Les créneaux horaires ne sont pas atteint. patientez...", DateTime.Now.ToString("HH"), DateTime.Now.ToString("mm"));
-                Console.WriteLine("Le script continue a fonctionner...");
-            }
-
+            Core_Session();           
         }
 
         // **********************
@@ -100,16 +85,6 @@ namespace ViewerTwitch
         // **********************
         // * METHODES DE CLASSE *
         // **********************
-        private bool Fnc_ValideHoraire()
-        {
-            bool verif = false;
-            int heure = DateTime.Now.Hour;
-            if (heure < 02 || heure >= 9)
-            {
-                verif = true;
-            }
-            return verif;
-        }
 
         private string Fnc_FindLocalDir()
         {

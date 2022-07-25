@@ -54,7 +54,6 @@ namespace ViewerTwitch
 
             afficheMenu();
 
-            SessionSpartiate spartiate = new SessionSpartiate();
             ConsoleKeyInfo input;
             do
             {
@@ -65,7 +64,7 @@ namespace ViewerTwitch
                     ActualisePlanning();
                     System.Threading.Thread.Sleep(5000);
                     afficheMenu();
-                    spartiate = new SessionSpartiate(); }
+                }
                 if (input.Key == ConsoleKey.F1)
                 { 
                     Interract interract = new Interract(input); 
@@ -88,7 +87,6 @@ namespace ViewerTwitch
                 ActualisePlanning();
                 System.Threading.Thread.Sleep(5000);
                 afficheMenu();
-                SessionSpartiate spartiate = new SessionSpartiate();
             }
             catch (Exception except)
             {
@@ -97,15 +95,13 @@ namespace ViewerTwitch
         }
         private static void OnTimedEvent_ECRIRE(object source, ElapsedEventArgs e)
         {
-            if (Fnc_ValideHoraire()==true)
+            if (Fnc_ValideHoraire())
             {
                 try
                 {
                     int minute = DateTime.Now.Minute;
                     if (minute == 59)
                     {
-
-                        Console.WriteLine("> Message Discord Transmis.");
                         static Task EcritPresence() => new GBot().MainAsync("Write");
                         EcritPresence();
                     }
@@ -129,7 +125,6 @@ namespace ViewerTwitch
         }
         private static void afficheMenu()
         {
-
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write("\n[F1]");
             Console.ForegroundColor = ConsoleColor.White;
@@ -142,7 +137,21 @@ namespace ViewerTwitch
             Console.Write("[F5]");
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(" : Refresh manuel\n\n");
+            if (Fnc_ValideHoraire())
+            {
+                SessionSpartiate spartiate = new SessionSpartiate();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                Console.Write(" Hors créneau  :");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("\nIl est {0}h{1}. Les créneaux horaires ne sont pas atteint. patientez...", DateTime.Now.ToString("HH"), DateTime.Now.ToString("mm"));
+                Console.WriteLine("Le script continue a fonctionner...");
+            }
         }
-      
+
     }
 }

@@ -61,7 +61,7 @@ namespace ViewerTwitch
             {
                 Ecrire_Discord();
             }
-        }
+         }
 
         private ulong Fnc_GetChannelID()
         {
@@ -110,32 +110,29 @@ namespace ViewerTwitch
             switch (jour)
             {
                 case DayOfWeek.Monday:
-                    ChannelID = 997927665367535656;
+                    ChannelID = 1000820139480055938;
                     break;
                 case DayOfWeek.Tuesday:
-                    ChannelID = 997934036599197757;
+                    ChannelID = 1000820225589116938;
                     break;
                 case DayOfWeek.Wednesday:
-                    ChannelID = 997942533722226818;
+                    ChannelID = 1000820314432868534;
                     break;
                 case DayOfWeek.Thursday:
-                    ChannelID = 997943662564626432;
+                    ChannelID = 1000820402106421308;
                     break;
                 case DayOfWeek.Friday:
-                    ChannelID = 997949515258675250;
+                    ChannelID = 1000820495605825536;
                     break;
                 case DayOfWeek.Saturday:
-                    ChannelID = 985535043285942292;
+                    ChannelID = 0;
                     break;
                 case DayOfWeek.Sunday:
-                    ChannelID = 979862708251951184;
+                    ChannelID = 0;
                     break;
             }
             return ChannelID;
         }
-
-
-
         private string getToken()
             {
                 StreamReader ?reader;
@@ -143,33 +140,30 @@ namespace ViewerTwitch
                 string token = reader.ReadLine();
                 return token;
             }
-         private string parseMsg(string message)
+        private string parseMsg(string message)
             {
                 string[] messageCut = message.Split("\n");
-                
                 string messageParse = "";
-
-
-            foreach (string line in messageCut)
+                foreach (string line in messageCut)
                 {
-                string[] lineCut = line.Split(' ');
-                string name = "";
+                    string[] lineCut = line.Split(' ');
+                    string name = "";
 
-                // gestion des problemes de mise en forme dans la liste (espace en trop)
-                List <string> lineClean = new List<string>();
-                foreach (string word in lineCut)
-                {
-                    if (word=="")
+                    // gestion des problemes de mise en forme dans la liste (espace en trop)
+                    List <string> lineClean = new List<string>();
+                    foreach (string word in lineCut)
                     {
-                        continue;
+                        if (word=="")
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            lineClean.Add(word);
+                        }
                     }
-                    else
-                    {
-                        lineClean.Add(word);
-                    }
-                }
 
-                if (lineClean.Count >= 5 && lineClean[4]!="")
+                    if (lineClean.Count >= 5 && lineClean[4]!="")
                     { 
                         name = lineClean[4];
                         if (name.Substring(0, 1) == "<")
@@ -182,7 +176,7 @@ namespace ViewerTwitch
                             }
                             else
                             {
-                                name = "@" + _client.GetUserAsync(id).Result.Username.ToString();
+                                    name = "@" + _client.GetUserAsync(id).Result.Username.ToString();
                             }
                         }
                     }
@@ -239,7 +233,17 @@ namespace ViewerTwitch
             {
                 messageDiscord=sr.ReadToEnd();
             }
-                _client.GetGuild(951887546273640598).GetTextChannel(channelID_Write).SendMessageAsync(messageDiscord);
+            _client.GetGuild(951887546273640598).GetTextChannel(channelID_Write).SendMessageAsync(messageDiscord);
+
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(" > ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Message DISCORD Transmis...");
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" ");
+
 
         }
     }
